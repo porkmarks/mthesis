@@ -16,14 +16,26 @@ public:
     ~Splines();
 
 private:
-    Ui::Splines *ui;
-    float m_curviness = 0;
-
-protected:
     void paintEvent(QPaintEvent *e);
-    void drawShape(QPainter &painter, float mu, const std::vector<QPointF>& points);
-    void drawSpline(QPainter& painter, const QPointF& start, const QPointF& end, const QPointF& c0, const QPointF& c1);
 
+    struct Point
+    {
+        QPointF point;
+        float t;
+    };
+
+    std::vector<Point> generatePoints(size_t count, float radius);
+    std::vector<Point> assignLTC(const std::vector<Point>& points, float ltcr);
+
+    void getControlPoints(QPointF p0, QPointF p1, QPointF p2, float t, QPointF& c0, QPointF& c1);
+    QImage floodFill(const QImage& img, const QPoint &pos, const QRgb &newColor);
+
+    QImage buildShape(const std::vector<Point>& _points);
+
+    Ui::Splines *ui;
+    float m_ltcr = 0;
+    float m_curviness = 0.5f;
+    std::vector<Point> m_points;
 };
 
 #endif // SPLINES_H

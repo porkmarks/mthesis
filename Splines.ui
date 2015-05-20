@@ -24,14 +24,38 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QSlider" name="curviness">
+       <widget class="QPushButton" name="newShape">
+        <property name="text">
+         <string>New Shape</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="applyLTCR">
+        <property name="text">
+         <string>Apply LTCR</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>LTCR</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="ltcr">
         <property name="maximum">
-         <number>999</number>
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="ltcrValue"/>
       </item>
      </layout>
     </widget>
@@ -42,5 +66,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>ltcr</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ltcrValue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>462</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>730</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
