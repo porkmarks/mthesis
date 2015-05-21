@@ -2,6 +2,8 @@
 #include "ui_Splines.h"
 
 const float MAX_SPEED = 50.f;
+const size_t POINT_COUNT = 20;
+const float RADIUS = 300.f;
 
 
 Splines::Splines(QWidget *parent) :
@@ -10,27 +12,20 @@ Splines::Splines(QWidget *parent) :
 {
     m_ui->setupUi(this);
 
-    m_ltcr = m_ui->ltcr->value() / 100.f;
-
     //generate first shape
-    m_points = assignLTC(generatePoints(20, 200), m_ltcr);
+    m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui->sharpness->value() / 100.f), m_ui->ltcr->value() / 100.f);
     m_shape = buildShape(m_points);
 
 
-    connect(m_ui->ltcr, &QSlider::valueChanged, [this](int value)
-    {
-       m_ltcr = value / 100.f;
-    });
-
     connect(m_ui->applyLTCR, &QPushButton::released, [this]()
     {
-       m_points = assignLTC(m_points, m_ltcr);
+       m_points = assignLTC(m_points, m_ui->ltcr->value() / 100.f);
        m_shape = buildShape(m_points);
     });
 
     connect(m_ui->newShape, &QPushButton::released, [this]()
     {
-       m_points = assignLTC(generatePoints(20, 200), m_ltcr);
+       m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui->sharpness->value() / 100.f), m_ui->ltcr->value() / 100.f);
        m_shape = buildShape(m_points);
     });
 
@@ -65,7 +60,7 @@ void Splines::paintEvent(QPaintEvent*)
         m_target = QPointF(x, y);
     }
 
-    auto speed = m_ui->speed->value() / 10000.f;
+    auto speed = m_ui->speed->value() / 700.f;
     m_position = (m_position + (m_target - m_position) * speed);
 
 
@@ -79,14 +74,14 @@ void Splines::paintEvent(QPaintEvent*)
 
 
 
-std::vector<Splines::Point> Splines::generatePoints(size_t count, float radius)
+std::vector<Splines::Point> Splines::generatePoints(size_t count, float radius, float sharpness)
 {
     float angleInc = 2.f * M_PI / count;
 
     std::random_device rd;
     std::default_random_engine e1(rd());
     std::uniform_real_distribution<float> daRnd(-angleInc / 3.f, angleInc / 3.f);
-    std::uniform_real_distribution<float> radiusRnd(radius / 2.f, radius);
+    std::uniform_real_distribution<float> radiusRnd(radius * ((1.f - sharpness) * 0.7f + 0.1f), radius);
 
     std::vector<Point> points;
 
@@ -246,6 +241,8 @@ QImage Splines::buildShape(const std::vector<Point>& _points)
     size_t n = _points.size();
     std::vector<Point> points = _points;
 
+    QColor shapeColor(84, 84, 84);
+
     QPointF min, max;
     min.setX(std::numeric_limits<float>::max());
     min.setY(std::numeric_limits<float>::max());
@@ -278,7 +275,7 @@ QImage Splines::buildShape(const std::vector<Point>& _points)
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QPen pen(Qt::white, 3.f);
+    QPen pen(shapeColor, 3.f);
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
     painter.setPen(pen);
@@ -315,7 +312,7 @@ QImage Splines::buildShape(const std::vector<Point>& _points)
     path.setFillRule(Qt::WindingFill);
     painter.drawPath(path);
 
-    return floodFill(image, imageCenter.toPoint(), qRgb(255, 255, 255));
+    return floodFill(image, imageCenter.toPoint(), shapeColor.rgb());
 }
 
 

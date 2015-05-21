@@ -26,7 +26,7 @@ private:
         float t;
     };
 
-    std::vector<Point> generatePoints(size_t count, float radius);
+    std::vector<Point> generatePoints(size_t count, float radius, float sharpness);
     std::vector<Point> assignLTC(const std::vector<Point>& points, float ltcr);
 
     void getControlPoints(QPointF p0, QPointF p1, QPointF p2, float t, QPointF& c0, QPointF& c1);
@@ -35,7 +35,6 @@ private:
     QImage buildShape(const std::vector<Point>& _points);
 
     Ui::Splines *m_ui;
-    float m_ltcr = 0;
     float m_curviness = 0.5f;
     float m_speed = 0.f;
     std::vector<Point> m_points;
