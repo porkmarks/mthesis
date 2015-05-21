@@ -5,6 +5,8 @@
 #include <QtGui>
 #include <QtCore>
 
+#include <chrono>
+
 namespace Ui {
 class Splines;
 }
@@ -32,10 +34,19 @@ private:
 
     QImage buildShape(const std::vector<Point>& _points);
 
-    Ui::Splines *ui;
+    Ui::Splines *m_ui;
     float m_ltcr = 0;
     float m_curviness = 0.5f;
+    float m_speed = 0.f;
     std::vector<Point> m_points;
+    QImage m_shape;
+
+    QPointF m_target;
+    QPointF m_position;
+
+    typedef std::chrono::high_resolution_clock Clock;
+
+    Clock::time_point m_last_target_tp = Clock::now();
 };
 
 #endif // SPLINES_H
