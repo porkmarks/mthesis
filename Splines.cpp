@@ -12,6 +12,11 @@ Splines::Splines(QWidget *parent) :
 
     m_ltcr = m_ui->ltcr->value() / 100.f;
 
+    //generate first shape
+    m_points = assignLTC(generatePoints(20, 200), m_ltcr);
+    m_shape = buildShape(m_points);
+
+
     connect(m_ui->ltcr, &QSlider::valueChanged, [this](int value)
     {
        m_ltcr = value / 100.f;
