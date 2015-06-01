@@ -15,6 +15,7 @@ private:
     float m_ltcr = 0;//0..1
     float m_sharpness = 0;//0..1
     float m_speed = 0; //0..1
+    std::chrono::system_clock::time_point m_start;
 
     struct Point
     {

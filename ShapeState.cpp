@@ -10,12 +10,14 @@
 
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
+const std::chrono::seconds SHAPEDURATION(8);
 
 void ShapeState::init(QWidget* widget)
 {
+    m_start = std::chrono::system_clock::now();
     m_widget = widget;
 
-    std::cout << "Shape init" << std::endl;
+    std::cout << "Shape init " << std::endl;
 
     std::random_device rd;
     std::default_random_engine ren(rd());
@@ -66,17 +68,15 @@ void ShapeState::process()
 
 std::unique_ptr<State> ShapeState::finish()
 {
-    std::cout << "Shape finish" << std::endl;
-
-//    m_counter--;
-//    if (m_counter > 0)
+    auto now = std::chrono::system_clock::now();
+    if (now - m_start >= SHAPEDURATION)
+    {
+        return std::unique_ptr<State>(new AssesmentState);
+    }
+    else
     {
         return nullptr;
     }
-//    else
-//    {
-//        return std::unique_ptr<State>(new AssesmentState);
-//    }
 }
 
 
