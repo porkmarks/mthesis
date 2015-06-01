@@ -1,31 +1,30 @@
-#include "Splines.h"
-#include "ui_Splines.h"
+#include "MainWindow.h"
+
 
 const float MAX_SPEED = 50.f;
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
 
 
-Splines::Splines(QWidget *parent) :
-    QDialog(parent),
-    m_ui(new Ui::Splines)
+MainWindow::MainWindow(QWidget *parent) :
+    QDialog(parent)
 {
-    m_ui->setupUi(this);
+    m_ui.setupUi(this);
 
     //generate first shape
-    m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui->sharpness->value() / 100.f), m_ui->ltcr->value() / 100.f);
+    m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui.sharpness->value() / 100.f), m_ui.ltcr->value() / 100.f);
     m_shape = buildShape(m_points);
 
 
-    connect(m_ui->applyLTCR, &QPushButton::released, [this]()
+    connect(m_ui.applyLTCR, &QPushButton::released, [this]()
     {
-       m_points = assignLTC(m_points, m_ui->ltcr->value() / 100.f);
+       m_points = assignLTC(m_points, m_ui.ltcr->value() / 100.f);
        m_shape = buildShape(m_points);
     });
 
-    connect(m_ui->newShape, &QPushButton::released, [this]()
+    connect(m_ui.newShape, &QPushButton::released, [this]()
     {
-       m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui->sharpness->value() / 100.f), m_ui->ltcr->value() / 100.f);
+       m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_ui.sharpness->value() / 100.f), m_ui.ltcr->value() / 100.f);
        m_shape = buildShape(m_points);
     });
 
@@ -38,12 +37,11 @@ Splines::Splines(QWidget *parent) :
     timer->start(16);
 }
 
-Splines::~Splines()
+MainWindow::~MainWindow()
 {
-    delete m_ui;
 }
 
-void Splines::paintEvent(QPaintEvent*)
+void MainWindow::paintEvent(QPaintEvent*)
 {
     auto now = Clock::now();
     if (now - m_last_target_tp > std::chrono::milliseconds(1000))
@@ -60,21 +58,21 @@ void Splines::paintEvent(QPaintEvent*)
         m_target = QPointF(x, y);
     }
 
-    auto speed = m_ui->speed->value() / 700.f;
+    auto speed = m_ui.speed->value() / 700.f;
     m_position = (m_position + (m_target - m_position) * speed);
 
 
     QPainter painter(this);
     painter.drawImage(m_position, m_shape);
 
-    //make the splines
+    //make the MainWindow
   //  drawSpline(painter, start, end, c0, c1);
 }
 
 
 
 
-std::vector<Splines::Point> Splines::generatePoints(size_t count, float radius, float sharpness)
+std::vector<MainWindow::Point> MainWindow::generatePoints(size_t count, float radius, float sharpness)
 {
     float angleInc = 2.f * M_PI / count;
 
@@ -105,7 +103,7 @@ std::vector<Splines::Point> Splines::generatePoints(size_t count, float radius, 
     return points;
 }
 
-std::vector<Splines::Point> Splines::assignLTC(const std::vector<Splines::Point>& _points, float ltcr)
+std::vector<MainWindow::Point> MainWindow::assignLTC(const std::vector<MainWindow::Point>& _points, float ltcr)
 {
     std::random_device rd;
     std::default_random_engine e1(rd());
@@ -129,7 +127,7 @@ std::vector<Splines::Point> Splines::assignLTC(const std::vector<Splines::Point>
 }
 
 
-void Splines::getControlPoints(QPointF p0, QPointF p1, QPointF p2, float t, QPointF& c0, QPointF& c1)
+void MainWindow::getControlPoints(QPointF p0, QPointF p1, QPointF p2, float t, QPointF& c0, QPointF& c1)
 {
     auto d01 = std::sqrt(std::pow(p1.x()-p0.x(),2.f)+std::pow(p1.y()-p0.y(),2));
     auto d12=std::sqrt(std::pow(p2.x()-p1.x(),2)+std::pow(p2.y()-p1.y(),2));
@@ -171,7 +169,7 @@ struct fillpixelinfo
     (pdy) = p.dy;\
 }
 
-QImage Splines::floodFill(const QImage& img, const QPoint &pos, const QRgb &newColor)
+QImage MainWindow::floodFill(const QImage& img, const QPoint &pos, const QRgb &newColor)
 {
    QImage image = img.copy();
 
@@ -231,7 +229,7 @@ skip:
    return image;
 }
 
-QImage Splines::buildShape(const std::vector<Point>& _points)
+QImage MainWindow::buildShape(const std::vector<Point>& _points)
 {
     if (_points.empty())
     {

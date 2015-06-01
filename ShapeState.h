@@ -1,24 +1,20 @@
-#ifndef SPLINES_H
-#define SPLINES_H
+#pragma once
 
-#include <QDialog>
-#include <QtGui>
-#include <QtCore>
-
+#include "State.h"
 #include <chrono>
 
-namespace Ui {
-class Splines;
-}
-
-class Splines : public QDialog
+class ShapeState : public State
 {
 public:
-    explicit Splines(QWidget *parent = 0);
-    ~Splines();
+    void init(QWidget* widget);
+    void process();
+    std::unique_ptr<State> finish();
 
 private:
-    void paintEvent(QPaintEvent *e);
+    QWidget* m_widget = nullptr;
+    float m_ltcr = 0;//0..1
+    float m_sharpness = 0;//0..1
+    float m_speed = 0; //0..1
 
     struct Point
     {
@@ -34,9 +30,7 @@ private:
 
     QImage buildShape(const std::vector<Point>& _points);
 
-    Ui::Splines *m_ui;
     float m_curviness = 0.5f;
-    float m_speed = 0.f;
     std::vector<Point> m_points;
     QImage m_shape;
 
@@ -44,8 +38,6 @@ private:
     QPointF m_position;
 
     typedef std::chrono::high_resolution_clock Clock;
-
     Clock::time_point m_last_target_tp = Clock::now();
 };
 
-#endif // SPLINES_H

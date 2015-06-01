@@ -14,9 +14,21 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        Splines.cpp
+    AffectiveSlider.cpp \
+    MainWindow.cpp \
+    AssesmentState.cpp \
+    ShapeState.cpp \
+    IdleState.cpp \
+    EndState.cpp
 
-HEADERS  += Splines.h
+HEADERS  += \
+    AffectiveSlider.h \
+    State.h \
+    ShapeState.h \
+    AssesmentState.h \
+    IdleState.h \
+    MainWindow.h \
+    EndState.h
 
 FORMS    += \
-    Splines.ui
+    MainWindow.ui
