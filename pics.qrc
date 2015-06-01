@@ -1,1 +1,11 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/">
+        <file>pics/AS_happy.png</file>
+        <file>pics/AS_intensity_cue.png</file>
+        <file>pics/AS_sleepy.png</file>
+        <file>pics/AS_thumb.png</file>
+        <file>pics/AS_track.png</file>
+        <file>pics/AS_unhappy.png</file>
+        <file>pics/AS_wideawake.png</file>
+    </qresource>
+</RCC>

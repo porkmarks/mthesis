@@ -10,7 +10,7 @@
 
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
-const std::chrono::seconds SHAPEDURATION(8);
+const std::chrono::seconds SHAPEDURATION(2);
 
 void ShapeState::init(QWidget* widget)
 {

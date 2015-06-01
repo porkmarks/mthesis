@@ -2,7 +2,7 @@
 #include "ShapeState.h"
 #include <iostream>
 
-const std::chrono::seconds DURATION(5);
+const std::chrono::seconds DURATION(1);
 
 void IdleState::init(QWidget* widget)
 {

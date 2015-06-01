@@ -31,4 +31,9 @@ HEADERS  += \
     EndState.h
 
 FORMS    += \
-    MainWindow.ui
+    MainWindow.ui \
+    PositivityWidget.ui \
+    ArousalWidget.ui
+
+RESOURCES += \
+    pics.qrc

@@ -6,6 +6,9 @@
 class State
 {
 public:
+    virtual ~State() {}
+
+
     //init is called only once, when the state is entered
     virtual void init(QWidget* widget) = 0;
 
