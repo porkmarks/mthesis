@@ -12,6 +12,42 @@ const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
 const std::chrono::seconds SHAPEDURATION(2);
 
+
+
+std::vector<ShapeState::Cell> ShapeState::s_cells =
+{{
+     { Range::LOW,    Range::LOW,    Range::LOW,    0 },
+     { Range::LOW,    Range::LOW,    Range::MEDIUM, 0 },
+     { Range::LOW,    Range::LOW,    Range::HIGH,   0 },
+     { Range::LOW,    Range::MEDIUM, Range::LOW,    0 },
+     { Range::LOW,    Range::MEDIUM, Range::MEDIUM, 0 },
+     { Range::LOW,    Range::MEDIUM, Range::HIGH,   0 },
+     { Range::LOW,    Range::HIGH,   Range::LOW,    0 },
+     { Range::LOW,    Range::HIGH,   Range::HIGH,   0 },
+     { Range::LOW,    Range::HIGH,   Range::HIGH,   0 },
+
+     { Range::MEDIUM, Range::LOW,    Range::LOW,    0 },
+     { Range::MEDIUM, Range::LOW,    Range::MEDIUM, 0 },
+     { Range::MEDIUM, Range::LOW,    Range::HIGH,   0 },
+     { Range::MEDIUM, Range::MEDIUM, Range::LOW,    0 },
+     { Range::MEDIUM, Range::MEDIUM, Range::MEDIUM, 0 },
+     { Range::MEDIUM, Range::MEDIUM, Range::HIGH,   0 },
+     { Range::MEDIUM, Range::HIGH,   Range::LOW,    0 },
+     { Range::MEDIUM, Range::HIGH,   Range::HIGH,   0 },
+     { Range::MEDIUM, Range::HIGH,   Range::HIGH,   0 },
+
+     { Range::HIGH,   Range::LOW,    Range::LOW,    0 },
+     { Range::HIGH,   Range::LOW,    Range::MEDIUM, 0 },
+     { Range::HIGH,   Range::LOW,    Range::HIGH,   0 },
+     { Range::HIGH,   Range::MEDIUM, Range::LOW,    0 },
+     { Range::HIGH,   Range::MEDIUM, Range::MEDIUM, 0 },
+     { Range::HIGH,   Range::MEDIUM, Range::HIGH,   0 },
+     { Range::HIGH,   Range::HIGH,   Range::LOW,    0 },
+     { Range::HIGH,   Range::HIGH,   Range::HIGH,   0 },
+     { Range::HIGH,   Range::HIGH,   Range::HIGH,   0 },
+ }};
+
+
 void ShapeState::init(QWidget* widget)
 {
     m_start = std::chrono::system_clock::now();
@@ -19,26 +55,54 @@ void ShapeState::init(QWidget* widget)
 
     std::cout << "Shape init " << std::endl;
 
+    initParamsFromCell(s_cells.front());
+
+    m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_params.sharpness), m_params.ltcr);
+    m_shape = buildShape(m_points);
+}
+
+
+std::pair<float, float> ShapeState::getMinMaxFromRange(Range range) const
+{
+    if (range == Range::LOW)
+    {
+        return { 0,         1.f/3.f };
+    }
+    else if (range == Range::MEDIUM)
+    {
+        return { 1.f/3.f,   2.f/3.f };
+    }
+    else
+    {
+        return { 2.f/3.f,   1.f };
+    }
+}
+
+void ShapeState::initParamsFromCell(const Cell& cell)
+{
     std::random_device rd;
     std::default_random_engine ren(rd());
     std::uniform_real_distribution<float> rnd(0.f, 1.f);
 
-    auto m_sharpness = rnd(ren);
-    auto m_ltcr= rnd(ren);
+    {
+        auto minmax = getMinMaxFromRange(cell.ltcrRange);
+        float t = rnd(ren); //0..1
+        m_params.ltcr = t * (minmax.second - minmax.first) + minmax.first;
+    }
 
+    {
+        auto minmax = getMinMaxFromRange(cell.sharpnessRange);
+        float t = rnd(ren); //0..1
+        m_params.sharpness = t * (minmax.second - minmax.first) + minmax.first;
+    }
 
-        QString filename = "/home/vv/Desktop/Data.txt";
-        QFile file(filename);
-        if (file.open(QIODevice::ReadWrite))
-        {
-            QTextStream stream(&file);
-            stream << m_sharpness <<"," << m_ltcr << endl;
-        }
-
-
-    m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_sharpness), m_ltcr);
-    m_shape = buildShape(m_points);
+    {
+        auto minmax = getMinMaxFromRange(cell.movementRange);
+        float t = rnd(ren); //0..1
+        m_params.movement = t * (minmax.second - minmax.first) + minmax.first;
+    }
 }
+
 
 void ShapeState::process()
 {
@@ -60,7 +124,7 @@ void ShapeState::process()
     }
 
 //    auto speed = m_speed / 700.f;
-    m_position = (m_position + (m_target - m_position) * m_speed);
+    m_position = (m_position + (m_target - m_position) * m_params.movement);
 
     QPainter painter(m_widget);
     painter.drawImage(m_position, m_shape);

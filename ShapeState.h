@@ -2,6 +2,7 @@
 
 #include "State.h"
 #include <chrono>
+#include <vector>
 
 class ShapeState : public State
 {
@@ -12,9 +13,7 @@ public:
 
 private:
     QWidget* m_widget = nullptr;
-    float m_ltcr = 0;//0..1
-    float m_sharpness = 0;//0..1
-    float m_speed = 0; //0..1
+
     std::chrono::system_clock::time_point m_start;
 
     struct Point
@@ -40,5 +39,33 @@ private:
 
     typedef std::chrono::high_resolution_clock Clock;
     Clock::time_point m_last_target_tp = Clock::now();
+
+
+    struct Params
+    {
+        float sharpness = 0;
+        float ltcr = 0;
+        float movement = 0;
+    } m_params;
+
+    enum class Range
+    {
+        LOW,
+        MEDIUM,
+        HIGH
+    };
+
+    struct Cell
+    {
+        Range ltcrRange;
+        Range sharpnessRange;
+        Range movementRange;
+        uint32_t count;
+    };
+
+    std::pair<float, float> getMinMaxFromRange(Range range) const;
+    void initParamsFromCell(const Cell& cell);
+
+    static std::vector<Cell> s_cells;
 };
 
