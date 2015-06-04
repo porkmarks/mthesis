@@ -6,11 +6,19 @@
 class IdleState : public State
 {
 public:
-    void init(QWidget* widget);
+    IdleState(std::shared_ptr<StateData> data);
+
+
+    ~IdleState();
+
+    void init(QWidget* mainWidget);
     void process();
     std::unique_ptr<State> finish();
 
 private:
+    std::shared_ptr<StateData> m_data;
+    QWidget* m_widget;
+
     std::chrono::system_clock::time_point m_start;
 };
 

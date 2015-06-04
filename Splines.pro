@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui serialport
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -14,26 +14,27 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-    AffectiveSlider.cpp \
     MainWindow.cpp \
     AssesmentState.cpp \
     ShapeState.cpp \
     IdleState.cpp \
-    EndState.cpp
+    EndState.cpp \
+    BeginState.cpp
 
 HEADERS  += \
-    AffectiveSlider.h \
     State.h \
     ShapeState.h \
     AssesmentState.h \
     IdleState.h \
     MainWindow.h \
-    EndState.h
+    EndState.h \
+    BeginState.h
 
 FORMS    += \
     MainWindow.ui \
     PositivityWidget.ui \
-    ArousalWidget.ui
+    ArousalWidget.ui \
+    BeginWidget.ui
 
 RESOURCES += \
     pics.qrc

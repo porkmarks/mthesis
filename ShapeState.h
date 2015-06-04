@@ -7,11 +7,15 @@
 class ShapeState : public State
 {
 public:
+    ShapeState(std::shared_ptr<StateData> data);
+
     void init(QWidget* widget);
     void process();
     std::unique_ptr<State> finish();
 
 private:
+    std::shared_ptr<StateData> m_data;
+
     QWidget* m_widget = nullptr;
 
     std::chrono::system_clock::time_point m_start;
@@ -39,6 +43,7 @@ private:
 
     typedef std::chrono::high_resolution_clock Clock;
     Clock::time_point m_last_target_tp = Clock::now();
+    Clock::time_point m_last_tp = Clock::now();
 
 
     struct Params
@@ -51,7 +56,8 @@ private:
     enum class Range
     {
         LOW,
-        MEDIUM,
+        LOWMEDIUM,
+        MEDIUMHIGH,
         HIGH
     };
 
@@ -60,7 +66,6 @@ private:
         Range ltcrRange;
         Range sharpnessRange;
         Range movementRange;
-        uint32_t count;
     };
 
     std::pair<float, float> getMinMaxFromRange(Range range) const;

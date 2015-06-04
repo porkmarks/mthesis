@@ -1,6 +1,11 @@
 #include "ShapeState.h"
 #include "AssesmentState.h"
 #include <iostream>
+#include <algorithm>    // std::random_shuffle
+#include <vector>       // std::vector
+#include <ctime>        // std::time
+#include <cstdlib>      // std::rand, std::srand
+
 
 #include <QtGui>
 #include <QtCore>
@@ -10,52 +15,114 @@
 
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
-const std::chrono::seconds SHAPEDURATION(2);
+const std::chrono::seconds SHAPEDURATION(5);
 
 
 
 std::vector<ShapeState::Cell> ShapeState::s_cells =
 {{
-     { Range::LOW,    Range::LOW,    Range::LOW,    0 },
-     { Range::LOW,    Range::LOW,    Range::MEDIUM, 0 },
-     { Range::LOW,    Range::LOW,    Range::HIGH,   0 },
-     { Range::LOW,    Range::MEDIUM, Range::LOW,    0 },
-     { Range::LOW,    Range::MEDIUM, Range::MEDIUM, 0 },
-     { Range::LOW,    Range::MEDIUM, Range::HIGH,   0 },
-     { Range::LOW,    Range::HIGH,   Range::LOW,    0 },
-     { Range::LOW,    Range::HIGH,   Range::HIGH,   0 },
-     { Range::LOW,    Range::HIGH,   Range::HIGH,   0 },
+     { Range::LOW,          Range::LOW,          Range::LOW,         },
+     { Range::LOW,          Range::LOW,          Range::LOWMEDIUM,   },
+     { Range::LOW,          Range::LOW,          Range::MEDIUMHIGH,  },
+     { Range::LOW,          Range::LOW,          Range::HIGH,        },
+     { Range::LOW,          Range::LOWMEDIUM,    Range::LOW,         },
+     { Range::LOW,          Range::LOWMEDIUM,    Range::LOWMEDIUM,   },
+     { Range::LOW,          Range::LOWMEDIUM,    Range::MEDIUMHIGH,  },
+     { Range::LOW,          Range::LOWMEDIUM,    Range::HIGH,        },
+     { Range::LOW,          Range::MEDIUMHIGH,   Range::LOW,         },
+     { Range::LOW,          Range::MEDIUMHIGH,   Range::LOWMEDIUM,   },
+     { Range::LOW,          Range::MEDIUMHIGH,   Range::MEDIUMHIGH,  },
+     { Range::LOW,          Range::MEDIUMHIGH,   Range::HIGH,        },
+     { Range::LOW,          Range::HIGH,         Range::LOW,         },
+     { Range::LOW,          Range::HIGH,         Range::LOWMEDIUM,   },
+     { Range::LOW,          Range::HIGH,         Range::MEDIUMHIGH,  },
+     { Range::LOW,          Range::HIGH,         Range::HIGH,        },
 
-     { Range::MEDIUM, Range::LOW,    Range::LOW,    0 },
-     { Range::MEDIUM, Range::LOW,    Range::MEDIUM, 0 },
-     { Range::MEDIUM, Range::LOW,    Range::HIGH,   0 },
-     { Range::MEDIUM, Range::MEDIUM, Range::LOW,    0 },
-     { Range::MEDIUM, Range::MEDIUM, Range::MEDIUM, 0 },
-     { Range::MEDIUM, Range::MEDIUM, Range::HIGH,   0 },
-     { Range::MEDIUM, Range::HIGH,   Range::LOW,    0 },
-     { Range::MEDIUM, Range::HIGH,   Range::HIGH,   0 },
-     { Range::MEDIUM, Range::HIGH,   Range::HIGH,   0 },
+     { Range::LOWMEDIUM,    Range::LOW,          Range::LOW,         },
+     { Range::LOWMEDIUM,    Range::LOW,          Range::LOWMEDIUM,   },
+     { Range::LOWMEDIUM,    Range::LOW,          Range::MEDIUMHIGH,  },
+     { Range::LOWMEDIUM,    Range::LOW,          Range::HIGH,        },
+     { Range::LOWMEDIUM,    Range::LOWMEDIUM,    Range::LOW,         },
+     { Range::LOWMEDIUM,    Range::LOWMEDIUM,    Range::LOWMEDIUM,   },
+     { Range::LOWMEDIUM,    Range::LOWMEDIUM,    Range::MEDIUMHIGH,  },
+     { Range::LOWMEDIUM,    Range::LOWMEDIUM,    Range::HIGH,        },
+     { Range::LOWMEDIUM,    Range::MEDIUMHIGH,   Range::LOW,         },
+     { Range::LOWMEDIUM,    Range::MEDIUMHIGH,   Range::LOWMEDIUM,   },
+     { Range::LOWMEDIUM,    Range::MEDIUMHIGH,   Range::MEDIUMHIGH,  },
+     { Range::LOWMEDIUM,    Range::MEDIUMHIGH,   Range::HIGH,        },
+     { Range::LOWMEDIUM,    Range::HIGH,         Range::LOW,         },
+     { Range::LOWMEDIUM,    Range::HIGH,         Range::LOWMEDIUM,   },
+     { Range::LOWMEDIUM,    Range::HIGH,         Range::MEDIUMHIGH,  },
+     { Range::LOWMEDIUM,    Range::HIGH,         Range::HIGH,        },
 
-     { Range::HIGH,   Range::LOW,    Range::LOW,    0 },
-     { Range::HIGH,   Range::LOW,    Range::MEDIUM, 0 },
-     { Range::HIGH,   Range::LOW,    Range::HIGH,   0 },
-     { Range::HIGH,   Range::MEDIUM, Range::LOW,    0 },
-     { Range::HIGH,   Range::MEDIUM, Range::MEDIUM, 0 },
-     { Range::HIGH,   Range::MEDIUM, Range::HIGH,   0 },
-     { Range::HIGH,   Range::HIGH,   Range::LOW,    0 },
-     { Range::HIGH,   Range::HIGH,   Range::HIGH,   0 },
-     { Range::HIGH,   Range::HIGH,   Range::HIGH,   0 },
+
+
+
+     { Range::MEDIUMHIGH,    Range::LOW,          Range::LOW,        },
+     { Range::MEDIUMHIGH,    Range::LOW,          Range::LOWMEDIUM,  },
+     { Range::MEDIUMHIGH,    Range::LOW,          Range::MEDIUMHIGH, },
+     { Range::MEDIUMHIGH,    Range::LOW,          Range::HIGH,       },
+     { Range::MEDIUMHIGH,    Range::LOWMEDIUM,    Range::LOW,        },
+     { Range::MEDIUMHIGH,    Range::LOWMEDIUM,    Range::LOWMEDIUM,  },
+     { Range::MEDIUMHIGH,    Range::LOWMEDIUM,    Range::MEDIUMHIGH, },
+     { Range::MEDIUMHIGH,    Range::LOWMEDIUM,    Range::HIGH,       },
+     { Range::MEDIUMHIGH,    Range::MEDIUMHIGH,   Range::LOW,        },
+     { Range::MEDIUMHIGH,    Range::MEDIUMHIGH,   Range::LOWMEDIUM,  },
+     { Range::MEDIUMHIGH,    Range::MEDIUMHIGH,   Range::MEDIUMHIGH, },
+     { Range::MEDIUMHIGH,    Range::MEDIUMHIGH,   Range::HIGH,       },
+     { Range::MEDIUMHIGH,    Range::HIGH,         Range::LOW,        },
+     { Range::MEDIUMHIGH,    Range::HIGH,         Range::LOWMEDIUM,  },
+     { Range::MEDIUMHIGH,    Range::HIGH,         Range::MEDIUMHIGH, },
+     { Range::MEDIUMHIGH,    Range::HIGH,         Range::HIGH,       },
+
+     { Range::HIGH,          Range::LOW,          Range::LOW,        },
+     { Range::HIGH,          Range::LOW,          Range::LOWMEDIUM,  },
+     { Range::HIGH,          Range::LOW,          Range::MEDIUMHIGH, },
+     { Range::HIGH,          Range::LOW,          Range::HIGH,       },
+     { Range::HIGH,          Range::LOWMEDIUM,    Range::LOW,        },
+     { Range::HIGH,          Range::LOWMEDIUM,    Range::LOWMEDIUM,  },
+     { Range::HIGH,          Range::LOWMEDIUM,    Range::MEDIUMHIGH, },
+     { Range::HIGH,          Range::LOWMEDIUM,    Range::HIGH,       },
+     { Range::HIGH,          Range::MEDIUMHIGH,   Range::LOW,        },
+     { Range::HIGH,          Range::MEDIUMHIGH,   Range::LOWMEDIUM,  },
+     { Range::HIGH,          Range::MEDIUMHIGH,   Range::MEDIUMHIGH, },
+     { Range::HIGH,          Range::MEDIUMHIGH,   Range::HIGH,       },
+     { Range::HIGH,          Range::HIGH,         Range::LOW,        },
+     { Range::HIGH,          Range::HIGH,         Range::LOWMEDIUM,  },
+     { Range::HIGH,          Range::HIGH,         Range::MEDIUMHIGH, },
+     { Range::HIGH,          Range::HIGH,         Range::HIGH,       },
+
+
  }};
 
+
+ShapeState::ShapeState(std::shared_ptr<StateData> data)
+{
+    m_data = data;
+}
 
 void ShapeState::init(QWidget* widget)
 {
     m_start = std::chrono::system_clock::now();
     m_widget = widget;
 
+    m_last_target_tp = std::chrono::system_clock::now() - std::chrono::seconds(10);
+
+
     std::cout << "Shape init " << std::endl;
 
-    initParamsFromCell(s_cells.front());
+    if (m_data->iterationCount == 0)
+    {
+        //random generator shuffle
+        std::random_shuffle ( s_cells.begin(), s_cells.end() );
+    }
+
+    initParamsFromCell(s_cells[m_data->iterationCount]);
+
+
+    auto d = std::chrono::system_clock::now() - m_data->startTimePoint;
+    auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
+    m_data->shapeDataFile << seconds.count() << ", Shape " << m_data->iterationCount << ", LTCR: " << m_params.ltcr << ", Sharpness: " << m_params.sharpness << ", Movement: " << m_params.movement << ". ";
 
     m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_params.sharpness), m_params.ltcr);
     m_shape = buildShape(m_points);
@@ -66,15 +133,19 @@ std::pair<float, float> ShapeState::getMinMaxFromRange(Range range) const
 {
     if (range == Range::LOW)
     {
-        return { 0,         1.f/3.f };
+        return { 0, 0.1f };
     }
-    else if (range == Range::MEDIUM)
+    else if (range == Range::LOWMEDIUM)
     {
-        return { 1.f/3.f,   2.f/3.f };
+        return { 0.33f,   0.34f };
+    }
+    else if (range == Range::MEDIUMHIGH)
+    {
+        return { 0.66f,   0.67f };
     }
     else
     {
-        return { 2.f/3.f,   1.f };
+        return { 0.99f, 1 };
     }
 }
 
@@ -123,11 +194,15 @@ void ShapeState::process()
         m_target = QPointF(x, y);
     }
 
+    std::chrono::duration<float> dt = now - m_last_tp;
+    m_last_tp = now;
+
 //    auto speed = m_speed / 700.f;
-    m_position = (m_position + (m_target - m_position) * m_params.movement);
+    m_position = (m_position + (m_target - m_position) * m_params.movement * dt.count());
 
     QPainter painter(m_widget);
     painter.drawImage(m_position, m_shape);
+
 }
 
 std::unique_ptr<State> ShapeState::finish()
@@ -135,7 +210,7 @@ std::unique_ptr<State> ShapeState::finish()
     auto now = std::chrono::system_clock::now();
     if (now - m_start >= SHAPEDURATION)
     {
-        return std::unique_ptr<State>(new AssesmentState);
+        return std::unique_ptr<State>(new AssesmentState(m_data));
     }
     else
     {

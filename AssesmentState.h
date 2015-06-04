@@ -11,6 +11,8 @@
 class AssesmentState : public State
 {
 public:
+    AssesmentState(std::shared_ptr<StateData> data);
+
     ~AssesmentState();
     void init(QWidget* widget);
     void process();
@@ -18,7 +20,7 @@ public:
 
 private:
 
-    static int s_counter;
+    std::shared_ptr<StateData> m_data;
 
     Ui::ArousalWidget m_arousalUi;
     Ui::PositivityWidget m_positivityUi;

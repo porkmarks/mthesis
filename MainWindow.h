@@ -3,6 +3,9 @@
 #include <QDialog>
 #include <QtGui>
 #include <QtCore>
+#include <QDesktopWidget>
+
+#include <QtSerialPort>
 
 #include <chrono>
 
@@ -22,5 +25,7 @@ private:
     Ui::MainWindow m_ui;
 
     std::unique_ptr<State> m_crtState;
+
+    std::unique_ptr<QSerialPort> m_serialPort;
 
 };

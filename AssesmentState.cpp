@@ -3,7 +3,11 @@
 
 const std::chrono::seconds ASSESMENT_DURATION(30);
 
-int AssesmentState::s_counter = 0;
+
+AssesmentState::AssesmentState(std::shared_ptr<StateData> data)
+{
+    m_data = data;
+}
 
 AssesmentState::~AssesmentState()
 {
@@ -13,7 +17,7 @@ AssesmentState::~AssesmentState()
 
 void AssesmentState::init(QWidget* mainWidget)
 {
-    s_counter++;
+    m_data->iterationCount++;
 
     //create a new widget to put our sliders into
     m_widget = new QWidget(mainWidget);
@@ -23,6 +27,10 @@ void AssesmentState::init(QWidget* mainWidget)
 
     //the sliders will be layed out vertically
     m_widget->setLayout(new QVBoxLayout(m_widget));
+
+    //add a spacer to push everything up
+    m_widget->layout()->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    m_widget->layout()->setSpacing(50);
 
 
     //create 2 widgets for our 2 sliders. The widgets are owned by m_widget (their parent)
@@ -86,11 +94,13 @@ void AssesmentState::process()
 
 std::unique_ptr<State> AssesmentState::finish()
 {
-    if (s_counter <= 3)
+    if (m_data->iterationCount <= 64)
     {
         if (m_button->isChecked())
         {
-            return std::unique_ptr<State>(new IdleState);
+            m_data->shapeDataFile << "Arousal: " << m_arousalUi.arousal->value() << ", Positivity: " << m_positivityUi.positivity->value() << std::endl;
+
+            return std::unique_ptr<State>(new IdleState(m_data));
         }
         else
         {
@@ -99,7 +109,7 @@ std::unique_ptr<State> AssesmentState::finish()
     }
     else
     {
-        return std::unique_ptr<State>(new EndState);
+        return std::unique_ptr<State>(new EndState(m_data));
     }
 
 
