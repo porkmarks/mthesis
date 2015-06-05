@@ -48,3 +48,9 @@ std::unique_ptr<State> IdleState::finish()
 
 }
 
+StateData& IdleState::getData()
+{
+    return *m_data;
+}
+
+

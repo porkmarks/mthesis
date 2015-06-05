@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui.setupUi(this);
 
    // setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
-    setWindowFlags(Qt::Tool);
+    //setWindowFlags(Qt::Tool);
     resize(QApplication::desktop()->size());
 
     m_crtState.reset(new BeginState);
@@ -23,8 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
     if (m_serialPort->open(QIODevice::ReadWrite) == false)
     {
         QMessageBox::critical(this, "Error!!!", "Cannot open serial port");
-        abort();
+        //abort();
     }
+
+    QDir().mkdir("data");
 
 
     auto timer = new QTimer(this);
@@ -52,9 +54,22 @@ void MainWindow::paintEvent(QPaintEvent*)
 
         m_serialPort->read(incomingData.data(), available);
 
-        for (auto c: incomingData)
+        StateData& stateData = m_crtState->getData();
+        if (stateData.sensorDataFile.is_open())
         {
-            std::cout << c;
+            for (auto c: incomingData)
+            {
+                if (c == '\n')
+                {
+                    auto d = std::chrono::system_clock::now() - stateData.startTimePoint;
+                    auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
+                    stateData.sensorDataFile << seconds.count() << ", ";
+                }
+                else
+                {
+                    stateData.sensorDataFile << c;
+                }
+            }
         }
     }
 

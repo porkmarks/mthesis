@@ -10,6 +10,8 @@ BeginState::~BeginState()
 
 void BeginState::init(QWidget* mainWidget)
 {
+    m_data.reset(new StateData);
+
     //create a new widget to put our sliders into
     m_widget = new QWidget(mainWidget);
 
@@ -30,6 +32,11 @@ void BeginState::process()
     m_beginUi.startButton->setEnabled(hasName);
 }
 
+StateData& BeginState::getData()
+{
+    return *m_data;
+}
+
 std::unique_ptr<State> BeginState::finish()
 {
     if (m_beginUi.startButton->isChecked())
@@ -37,14 +44,13 @@ std::unique_ptr<State> BeginState::finish()
         QString qname = m_beginUi.lineEdit->text();
         std::string name = qname.toLatin1().data();
 
-        m_data.reset(new StateData);
         m_data->startTimePoint = std::chrono::system_clock::now();
-        m_data->sensorDataFile.open("data_" + name + ".sensor");
+        m_data->sensorDataFile.open("data/data_" + name + ".sensor");
         if (!m_data->sensorDataFile)
         {
             abort();
         }
-        m_data->shapeDataFile.open("data_" + name + ".shape");
+        m_data->shapeDataFile.open("data/data_" + name + ".shape");
         if (!m_data->shapeDataFile)
         {
             abort();

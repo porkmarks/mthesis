@@ -15,6 +15,8 @@ public:
     void process();
     std::unique_ptr<State> finish();
 
+    StateData& getData();
+
 private:
     std::shared_ptr<StateData> m_data;
 

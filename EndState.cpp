@@ -20,3 +20,7 @@ std::unique_ptr<State> EndState::finish()
     return nullptr;
 }
 
+StateData& EndState::getData()
+{
+    return *m_data;
+}

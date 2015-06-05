@@ -31,5 +31,7 @@ public:
 
     //finish is called per frame until it returns a non-null state
     virtual std::unique_ptr<State> finish() = 0;
+
+    virtual StateData& getData() = 0;
 };
 

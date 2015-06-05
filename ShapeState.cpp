@@ -15,7 +15,7 @@
 
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
-const std::chrono::seconds SHAPEDURATION(5);
+const std::chrono::seconds SHAPEDURATION(1);
 
 
 
@@ -122,7 +122,10 @@ void ShapeState::init(QWidget* widget)
 
     auto d = std::chrono::system_clock::now() - m_data->startTimePoint;
     auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
-    m_data->shapeDataFile << seconds.count() << ", Shape " << m_data->iterationCount << ", LTCR: " << m_params.ltcr << ", Sharpness: " << m_params.sharpness << ", Movement: " << m_params.movement << ". ";
+    m_data->shapeDataFile << seconds.count()
+                          << ", LTCR: " << static_cast<int>(m_params.cell.ltcrRange)
+                          << ", Sharpness: " << static_cast<int>(m_params.cell.sharpnessRange)
+                          << ", Movement: " << static_cast<int>(m_params.cell.movementRange) << ", ";
 
     m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_params.sharpness), m_params.ltcr);
     m_shape = buildShape(m_points);
@@ -172,6 +175,9 @@ void ShapeState::initParamsFromCell(const Cell& cell)
         float t = rnd(ren); //0..1
         m_params.movement = t * (minmax.second - minmax.first) + minmax.first;
     }
+
+    //store the cell as well to know where we got the params from
+    m_params.cell = cell;
 }
 
 
@@ -219,7 +225,10 @@ std::unique_ptr<State> ShapeState::finish()
 }
 
 
-
+StateData& ShapeState::getData()
+{
+    return *m_data;
+}
 
 
 std::vector<ShapeState::Point> ShapeState::generatePoints(size_t count, float radius, float sharpness)
@@ -462,3 +471,4 @@ QImage ShapeState::buildShape(const std::vector<Point>& _points)
 
     return floodFill(image, imageCenter.toPoint(), shapeColor.rgb());
 }
+

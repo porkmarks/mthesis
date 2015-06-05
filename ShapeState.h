@@ -13,6 +13,9 @@ public:
     void process();
     std::unique_ptr<State> finish();
 
+    StateData& getData();
+
+
 private:
     std::shared_ptr<StateData> m_data;
 
@@ -46,12 +49,7 @@ private:
     Clock::time_point m_last_tp = Clock::now();
 
 
-    struct Params
-    {
-        float sharpness = 0;
-        float ltcr = 0;
-        float movement = 0;
-    } m_params;
+
 
     enum class Range
     {
@@ -67,6 +65,14 @@ private:
         Range sharpnessRange;
         Range movementRange;
     };
+
+    struct Params
+    {
+        Cell cell;
+        float sharpness = 0;
+        float ltcr = 0;
+        float movement = 0;
+    } m_params;
 
     std::pair<float, float> getMinMaxFromRange(Range range) const;
     void initParamsFromCell(const Cell& cell);

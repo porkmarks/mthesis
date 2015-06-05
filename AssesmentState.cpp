@@ -68,11 +68,11 @@ void AssesmentState::init(QWidget* mainWidget)
     m_button->setCheckable(true);
 
 
-    QObject::connect(m_arousalUi.arousal, &QSlider::sliderReleased, [this]() { m_wasArousalPressed = true; });
-    QObject::connect(m_arousalUi.arousal, &QSlider::valueChanged, [this](int value) { m_wasArousalPressed = true; });
+    QObject::connect(m_arousalUi.slider, &QSlider::sliderReleased, [this]() { m_wasArousalPressed = true; });
+    QObject::connect(m_arousalUi.slider, &QSlider::valueChanged, [this](int value) { m_wasArousalPressed = true; });
 
-    QObject::connect(m_positivityUi.positivity, &QSlider::sliderReleased, [this]() { m_wasPositivityPressed = true; });
-    QObject::connect(m_positivityUi.positivity, &QSlider::valueChanged, [this](int value) { m_wasPositivityPressed = true; });
+    QObject::connect(m_positivityUi.slider, &QSlider::sliderReleased, [this]() { m_wasPositivityPressed = true; });
+    QObject::connect(m_positivityUi.slider, &QSlider::valueChanged, [this](int value) { m_wasPositivityPressed = true; });
 
     // Connect button signal to appropriate slot
      //connect(m_button, SIGNAL (clicked()), m_widget, SLOT (activateButton());
@@ -81,6 +81,11 @@ void AssesmentState::init(QWidget* mainWidget)
 
     //add a spacer to push everything up
     m_widget->layout()->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+}
+
+StateData& AssesmentState::getData()
+{
+    return *m_data;
 }
 
 void AssesmentState::process()
@@ -98,7 +103,7 @@ std::unique_ptr<State> AssesmentState::finish()
     {
         if (m_button->isChecked())
         {
-            m_data->shapeDataFile << "Arousal: " << m_arousalUi.arousal->value() << ", Positivity: " << m_positivityUi.positivity->value() << std::endl;
+            m_data->shapeDataFile << "Arousal: " << m_arousalUi.slider->value() << ", Positivity: " << m_positivityUi.slider->value() << std::endl;
 
             return std::unique_ptr<State>(new IdleState(m_data));
         }
