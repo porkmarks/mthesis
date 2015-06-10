@@ -49,34 +49,16 @@ private:
     Clock::time_point m_last_tp = Clock::now();
 
 
-
-
-    enum class Range
-    {
-        LOW,
-        LOWMEDIUM,
-        MEDIUMHIGH,
-        HIGH
-    };
-
-    struct Cell
-    {
-        Range ltcrRange;
-        Range sharpnessRange;
-        Range movementRange;
-    };
-
     struct Params
     {
-        Cell cell;
         float sharpness = 0;
         float ltcr = 0;
         float movement = 0;
     } m_params;
 
     std::pair<float, float> getMinMaxFromRange(Range range) const;
-    void initParamsFromCell(const Cell& cell);
+    void initParamsFromCell(const ShapeDescription& cell);
 
-    static std::vector<Cell> s_cells;
+    static std::vector<ShapeDescription> s_cells;
 };
 

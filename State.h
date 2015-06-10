@@ -5,6 +5,30 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <vector>
+#include <string>
+
+
+enum class Range
+{
+    LOW,
+    LOWMEDIUM,
+    MEDIUMHIGH,
+    HIGH
+};
+
+struct ShapeDescription
+{
+    Range ltcrRange;
+    Range sharpnessRange;
+    Range movementRange;
+};
+
+struct SensorData
+{
+    std::string value;
+    std::chrono::system_clock::time_point timestamp = std::chrono::system_clock::now();
+};
 
 
 struct StateData
@@ -12,7 +36,13 @@ struct StateData
     std::chrono::system_clock::time_point startTimePoint;
     int iterationCount = 0;
     std::ofstream sensorDataFile;
-    std::ofstream shapeDataFile;
+
+    ShapeDescription shapeDescription;
+
+    std::vector<SensorData> sensorData;
+
+    int positivity = 0;
+    int arousal = 0;
 };
 
 

@@ -15,11 +15,10 @@
 
 const size_t POINT_COUNT = 20;
 const float RADIUS = 300.f;
-const std::chrono::seconds SHAPEDURATION(1);
+const std::chrono::seconds SHAPEDURATION(8);
 
 
-
-std::vector<ShapeState::Cell> ShapeState::s_cells =
+std::vector<ShapeDescription> ShapeState::s_cells =
 {{
      { Range::LOW,          Range::LOW,          Range::LOW,         },
      { Range::LOW,          Range::LOW,          Range::LOWMEDIUM,   },
@@ -106,6 +105,8 @@ void ShapeState::init(QWidget* widget)
     m_start = std::chrono::system_clock::now();
     m_widget = widget;
 
+    StateData& stateData = getData();
+
     m_last_target_tp = std::chrono::system_clock::now() - std::chrono::seconds(10);
 
 
@@ -118,14 +119,6 @@ void ShapeState::init(QWidget* widget)
     }
 
     initParamsFromCell(s_cells[m_data->iterationCount]);
-
-
-    auto d = std::chrono::system_clock::now() - m_data->startTimePoint;
-    auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
-    m_data->shapeDataFile << seconds.count()
-                          << ", LTCR: " << static_cast<int>(m_params.cell.ltcrRange)
-                          << ", Sharpness: " << static_cast<int>(m_params.cell.sharpnessRange)
-                          << ", Movement: " << static_cast<int>(m_params.cell.movementRange) << ", ";
 
     m_points = assignLTC(generatePoints(POINT_COUNT, RADIUS, m_params.sharpness), m_params.ltcr);
     m_shape = buildShape(m_points);
@@ -152,7 +145,7 @@ std::pair<float, float> ShapeState::getMinMaxFromRange(Range range) const
     }
 }
 
-void ShapeState::initParamsFromCell(const Cell& cell)
+void ShapeState::initParamsFromCell(const ShapeDescription& cell)
 {
     std::random_device rd;
     std::default_random_engine ren(rd());
@@ -177,7 +170,7 @@ void ShapeState::initParamsFromCell(const Cell& cell)
     }
 
     //store the cell as well to know where we got the params from
-    m_params.cell = cell;
+    m_data->shapeDescription = cell;
 }
 
 

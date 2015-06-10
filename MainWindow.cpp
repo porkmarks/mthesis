@@ -59,15 +59,26 @@ void MainWindow::paintEvent(QPaintEvent*)
         {
             for (auto c: incomingData)
             {
-                if (c == '\n')
+                if (c == '\r')
                 {
-                    auto d = std::chrono::system_clock::now() - stateData.startTimePoint;
-                    auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
-                    stateData.sensorDataFile << seconds.count() << ", ";
+                    ; // we don't do anything
+                }
+                else if (c == '\n')
+                {
+                    //we're done with this line, start a new data
+                    stateData.sensorData.push_back(SensorData());
                 }
                 else
                 {
-                    stateData.sensorDataFile << c;
+                    //first line? Add ad new data
+                    if (stateData.sensorData.empty())
+                    {
+                        stateData.sensorData.push_back(SensorData());
+                    }
+
+                    //accumulate the data from the current line
+                    SensorData& data = stateData.sensorData.back();
+                    data.value.push_back(c);
                 }
             }
         }

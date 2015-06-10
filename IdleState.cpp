@@ -3,7 +3,7 @@
 #include <iostream>
 #include <QLayout>
 
-const std::chrono::seconds DURATION(1);
+const std::chrono::seconds DURATION(5);
 
 IdleState::IdleState(std::shared_ptr<StateData> data)
 {
@@ -14,6 +14,22 @@ IdleState::~IdleState()
 {
     delete m_widget;
 }
+
+
+class unique_pig
+{
+    unique_pig(int* value)
+    {
+        m_value = value;
+    }
+    ~unique_pig()
+    {
+        delete m_value;
+    }
+private:
+    int* m_value = nullptr;
+};
+
 
 void IdleState::init(QWidget* mainWidget)
 {
@@ -39,6 +55,31 @@ std::unique_ptr<State> IdleState::finish()
     auto now = std::chrono::system_clock::now();
     if (now - m_start >= DURATION)
     {
+        //dump all the sensor data to the file
+        StateData& stateData = getData();
+        for (SensorData data: stateData.sensorData)
+        {
+            //this data was not filled yet so stop here
+            if (data.value.empty())
+            {
+                break;
+            }
+
+            auto d = data.timestamp - stateData.startTimePoint;
+            auto seconds = std::chrono::duration_cast<std::chrono::duration<float>>(d);
+            stateData.sensorDataFile << seconds.count()
+                            << "," << static_cast<int>(stateData.shapeDescription.ltcrRange)
+                            << "," << static_cast<int>(stateData.shapeDescription.sharpnessRange)
+                            << "," << static_cast<int>(stateData.shapeDescription.movementRange)
+                            << "," << stateData.positivity
+                            << "," << stateData.arousal
+                            << "," << stateData.iterationCount
+                            << "," << data.value
+                            << std::endl;
+        }
+
+        stateData.sensorData.clear();
+
         return std::unique_ptr<State>(new ShapeState(m_data));
     }
     else

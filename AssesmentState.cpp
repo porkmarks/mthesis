@@ -99,11 +99,13 @@ void AssesmentState::process()
 
 std::unique_ptr<State> AssesmentState::finish()
 {
-    if (m_data->iterationCount <= 64)
+    if (m_data->iterationCount < 64)
     {
         if (m_button->isChecked())
         {
-            m_data->shapeDataFile << "Arousal: " << m_arousalUi.slider->value() << ", Positivity: " << m_positivityUi.slider->value() << std::endl;
+            auto& stateData = getData();
+            stateData.positivity = m_positivityUi.slider->value();
+            stateData.arousal = m_arousalUi.slider->value();
 
             return std::unique_ptr<State>(new IdleState(m_data));
         }
