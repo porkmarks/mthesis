@@ -3,8 +3,6 @@
 #include "State.h"
 #include <QPushButton>
 
-#include "ui_ArousalWidget.h"
-#include "ui_PositivityWidget.h"
 #include "ui_BeginWidget.h"
 
 class BeginState : public State

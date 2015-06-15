@@ -45,6 +45,8 @@ std::unique_ptr<State> BeginState::finish()
         std::string name = qname.toLatin1().data();
 
         m_data->startTimePoint = std::chrono::system_clock::now();
+
+        //opening sensor data file
         m_data->sensorDataFile.open("data/data_" + name + ".csv");
         if (!m_data->sensorDataFile)
         {
@@ -60,6 +62,24 @@ std::unique_ptr<State> BeginState::finish()
                         << "," << "Iteration"
                         << "," << "GSR"
                         << std::endl;
+
+
+        //opening assesment file
+        m_data->assesmentDataFile.open("data/data_assessment" + name + ".csv");
+        if (!m_data->assesmentDataFile)
+        {
+            abort();
+        }
+
+        m_data->assesmentDataFile << "Timestamp"
+                        << "," << "LCTR"
+                        << "," << "Sharpness"
+                        << "," << "Movement"
+                        << "," << "Positivity"
+                        << "," << "Arousal"
+                        << "," << "Iteration"
+                        << std::endl;
+
 
 
         return std::unique_ptr<State>(new ShapeState(m_data));

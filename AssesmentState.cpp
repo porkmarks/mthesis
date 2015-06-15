@@ -17,7 +17,7 @@ AssesmentState::~AssesmentState()
 
 void AssesmentState::init(QWidget* mainWidget)
 {
-    m_data->iterationCount++;
+
 
     //create a new widget to put our sliders into
     m_widget = new QWidget(mainWidget);
@@ -99,25 +99,16 @@ void AssesmentState::process()
 
 std::unique_ptr<State> AssesmentState::finish()
 {
-    if (m_data->iterationCount < 64)
+    if (m_button->isChecked())
     {
-        if (m_button->isChecked())
-        {
-            auto& stateData = getData();
-            stateData.positivity = m_positivityUi.slider->value();
-            stateData.arousal = m_arousalUi.slider->value();
+        auto& stateData = getData();
+        stateData.positivity = m_positivityUi.slider->value();
+        stateData.arousal = m_arousalUi.slider->value();
 
-            return std::unique_ptr<State>(new IdleState(m_data));
-        }
-        else
-        {
-            return nullptr;
-        }
+        return std::unique_ptr<State>(new IdleState(m_data));
     }
     else
     {
-        return std::unique_ptr<State>(new EndState(m_data));
+        return nullptr;
     }
-
-
 }

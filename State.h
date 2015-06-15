@@ -36,6 +36,7 @@ struct StateData
     std::chrono::system_clock::time_point startTimePoint;
     int iterationCount = 0;
     std::ofstream sensorDataFile;
+    std::ofstream assesmentDataFile;
 
     ShapeDescription shapeDescription;
 

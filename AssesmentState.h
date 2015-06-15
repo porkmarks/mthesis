@@ -2,7 +2,6 @@
 
 #include "State.h"
 #include "IdleState.h"
-#include "EndState.h"
 #include <QPushButton>
 
 #include "ui_ArousalWidget.h"

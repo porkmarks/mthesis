@@ -34,7 +34,8 @@ FORMS    += \
     MainWindow.ui \
     PositivityWidget.ui \
     ArousalWidget.ui \
-    BeginWidget.ui
+    BeginWidget.ui \
+    EndState.ui
 
 RESOURCES += \
     pics.qrc

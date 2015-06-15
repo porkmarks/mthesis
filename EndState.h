@@ -1,6 +1,7 @@
 #pragma once
 
 #include "State.h"
+#include "ui_EndState.h"
 
 class EndState : public State
 {
@@ -15,6 +16,8 @@ public:
 
 private:
     std::shared_ptr<StateData> m_data;
+    QWidget* m_widget;
+    Ui::EndState m_endUi;
 
 };
 
